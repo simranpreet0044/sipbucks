@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SIPBucks — India's Smartest SIP Calculator</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #060d1a;
+    --surface: #0e1929;
+    --surface2: #162236;
+    --border: #1e3048;
+    --gold: #f5c518;
+    --gold-dim: #f5c51815;
+    --gold-mid: #f5c51840;
+    --green: #00c980;
+    --green-dim: #00c98018;
+    --text: #dce8f5;
+    --muted: #6a83a0;
+    --white: #ffffff;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    font-family: 'Outfit', sans-serif;
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  header {
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+    background: rgba(6,13,26,0.97);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    backdrop-filter: blur(12px);
+  }
+  .logo {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--white);
+    letter-spacing: -0.5px;
+  }
+  .logo .sip { color: var(--gold); }
+  .logo .bucks { color: var(--white); }
+  .logo .dot { color: var(--green); font-size: 1.8rem; line-height: 0; vertical-align: middle; }
+  .tagline-tag {
+    font-size: 0.72rem;
+    color: var(--gold);
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    border: 1px solid var(--gold-mid);
+    padding: 4px 12px;
+    border-radius: 20px;
+    background: var(--gold-dim);
+  }
+
+  /* HERO */
+  .hero {
+    text-align: center;
+    padding: 56px 20px 36px;
+    background: var(--bg);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -60px; left: 50%;
+    transform: translateX(-50%);
+    width: 700px; height: 350px;
+    background: radial-gradient(ellipse, rgba(245,197,24,0.07) 0%, rgba(0,201,128,0.05) 50%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--gold-dim);
+    border: 1px solid var(--gold-mid);
+    color: var(--gold);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 5px 14px;
+    border-radius: 20px;
+    margin-bottom: 22px;
+  }
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1.9rem, 5vw, 3.2rem);
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 14px;
+    color: var(--white);
+  }
+  .hero h1 .accent { color: var(--gold); }
+  .hero p {
+    color: #7a9abf;
+    font-size: 0.97rem;
+    max-width: 460px;
+    margin: 0 auto 28px;
+    font-weight: 400;
+    line-height: 1.6;
+  }
+
+  /* STATS */
+  .stats-bar {
+    display: flex;
+    justify-content: center;
+    gap: 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+  .stat {
+    text-align: center;
+    padding: 18px 28px;
+    border-right: 1px solid var(--border);
+    flex: 1;
+    min-width: 120px;
+  }
+  .stat:last-child { border-right: none; }
+  .stat-val {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: var(--gold);
+  }
+  .stat-label {
+    font-size: 0.72rem;
+    color: var(--muted);
+    margin-top: 3px;
+    letter-spacing: 0.3px;
+  }
+
+  /* MAIN GRID */
+  .main {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 32px 16px 80px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+  .card-header {
+    padding: 16px 22px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--surface2);
+  }
+  .card-icon {
+    width: 30px; height: 30px;
+    border-radius: 7px;
+    background: var(--gold-dim);
+    border: 1px solid var(--gold-mid);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.95rem;
+  }
+  .card-header h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--white);
+  }
+  .card-body { padding: 22px; }
+
+  /* FORM FIELDS */
+  .field { margin-bottom: 18px; }
+  label {
+    display: block;
+    font-size: 0.74rem;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 7px;
+  }
+  .input-wrap { position: relative; }
+  .input-prefix {
+    position: absolute;
+    left: 13px; top: 50%;
+    transform: translateY(-50%);
+    color: var(--gold);
+    font-weight: 700;
+    font-size: 0.9rem;
+  }
+  input[type="number"] {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    padding: 11px 13px 11px 30px;
+    color: var(--text);
+    font-family: 'Outfit', sans-serif;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    -moz-appearance: textfield;
+  }
+  input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+  input[type="number"]:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(245,197,24,0.1);
+  }
+
+  select {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    padding: 11px 36px 11px 13px;
+    color: var(--text);
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 11 11'%3E%3Cpath fill='%23f5c518' d='M5.5 7.5L1 3h9z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 13px center;
+    cursor: pointer;
+  }
+  select option { background: #162236; color: #dce8f5; }
+  select:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(245,197,24,0.1); }
+
+  /* RANGE */
+  .range-field { margin-bottom: 18px; }
+  .range-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .range-lbl {
+    font-size: 0.74rem;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+  }
+  .range-val {
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--gold);
+  }
+  input[type="range"] {
+    width: 100%;
+    height: 5px;
+    border-radius: 3px;
+    background: var(--border);
+    border: none;
+    outline: none;
+    cursor: pointer;
+    accent-color: var(--gold);
+    padding: 0;
+  }
+
+  .auto-note {
+    background: var(--gold-dim);
+    border: 1px solid var(--gold-mid);
+    border-radius: 9px;
+    padding: 11px 15px;
+    font-size: 0.8rem;
+    color: var(--gold);
+    text-align: center;
+    margin-top: 4px;
+  }
+
+  /* RESULTS */
+  .result-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+  .result-item {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    padding: 12px;
+  }
+  .result-item.highlight {
+    border-color: var(--gold-mid);
+    background: var(--gold-dim);
+  }
+  .result-label {
+    font-size: 0.7rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 5px;
+  }
+  .result-value {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--white);
+  }
+  .result-item.highlight .result-value { color: var(--gold); }
+
+  .growth-bar-wrap { margin-bottom: 18px; }
+  .growth-bar-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.72rem;
+    color: var(--muted);
+    margin-bottom: 7px;
+  }
+  .growth-bar-track {
+    height: 9px;
+    background: var(--surface2);
+    border-radius: 5px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .growth-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--green), var(--gold));
+    border-radius: 5px;
+    transition: width 0.7s ease;
+  }
+
+  .insight-box {
+    background: var(--surface2);
+    border-radius: 9px;
+    padding: 13px;
+    border: 1px solid var(--border);
+  }
+  .insight-label {
+    font-size: 0.7rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 6px;
+  }
+  .insight-text {
+    font-size: 0.86rem;
+    color: var(--text);
+    line-height: 1.6;
+  }
+
+  /* AI SECTION */
+  .ai-section {
+    grid-column: span 2;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+  .ai-header {
+    padding: 16px 22px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--surface2);
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .ai-header-left { display: flex; align-items: center; gap: 10px; }
+  .ai-icon {
+    width: 30px; height: 30px;
+    border-radius: 7px;
+    background: linear-gradient(135deg, #1a3a6e, #0e5c3a);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.95rem;
+  }
+  .ai-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--white);
+  }
+  .ai-badge {
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #1a3a6e55, #0e5c3a55);
+    border: 1px solid #00c98044;
+    color: var(--green);
+    letter-spacing: 1px;
+  }
+  .ai-body { padding: 22px; }
+
+  .chips-label { font-size: 0.82rem; color: var(--muted); margin-bottom: 10px; }
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-bottom: 16px;
+  }
+  .chip {
+    padding: 6px 13px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    font-size: 0.78rem;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.18s;
+    user-select: none;
+  }
+  .chip:hover, .chip.active {
+    border-color: var(--gold);
+    color: var(--gold);
+    background: var(--gold-dim);
+  }
+
+  .ai-input-row {
+    display: flex;
+    gap: 9px;
+    margin-bottom: 16px;
+  }
+  .ai-input {
+    flex: 1;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    padding: 11px 14px;
+    color: var(--text);
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .ai-input:focus { border-color: var(--gold); }
+  .ai-input::placeholder { color: var(--muted); }
+  .ask-btn {
+    padding: 11px 20px;
+    background: linear-gradient(135deg, var(--gold), #d4a800);
+    color: #060d1a;
+    border: none;
+    border-radius: 9px;
+    font-family: 'Syne', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .ask-btn:hover { opacity: 0.88; transform: translateY(-1px); }
+  .ask-btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+
+  .ai-loading {
+    display: none;
+    align-items: center;
+    gap: 10px;
+    padding: 16px;
+    color: var(--muted);
+    font-size: 0.88rem;
+  }
+  .ai-loading.show { display: flex; }
+  .dots span {
+    display: inline-block;
+    width: 6px; height: 6px;
+    background: var(--gold);
+    border-radius: 50%;
+    animation: bounce 1.1s ease infinite;
+  }
+  .dots span:nth-child(2) { animation-delay: 0.18s; }
+  .dots span:nth-child(3) { animation-delay: 0.36s; }
+  @keyframes bounce {
+    0%, 80%, 100% { transform: translateY(0); opacity: 0.6; }
+    40% { transform: translateY(-7px); opacity: 1; }
+  }
+
+  .ai-response {
+    display: none;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px;
+    font-size: 0.9rem;
+    line-height: 1.8;
+    color: var(--text);
+    white-space: pre-wrap;
+  }
+  .ai-response.show { display: block; }
+  .ai-response.error { border-color: #c0392b44; color: #e07060; background: #2a100e; }
+
+  /* DISCLAIMER */
+  .disclaimer {
+    grid-column: span 2;
+    background: #100e00;
+    border: 1px solid #3a2e0088;
+    border-radius: 10px;
+    padding: 13px 18px;
+    font-size: 0.78rem;
+    color: #8a7840;
+    display: flex;
+    gap: 9px;
+    line-height: 1.6;
+  }
+
+  /* FOOTER */
+  footer {
+    text-align: center;
+    padding: 24px;
+    border-top: 1px solid var(--border);
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+  footer span { color: var(--gold); font-weight: 600; }
+
+  @media (max-width: 640px) {
+    .main { grid-template-columns: 1fr; }
+    .ai-section, .disclaimer { grid-column: span 1; }
+    header { padding: 12px 16px; }
+    .stats-bar { gap: 0; }
+    .stat { min-width: 50%; border-bottom: 1px solid var(--border); }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <span class="sip">SIP</span><span class="bucks">Bucks</span><span class="dot">·</span>
+  </div>
+  <div class="tagline-tag">💰 India's SIP Calculator</div>
+</header>
+
+<div class="hero">
+  <div class="hero-pill">✦ Free · No Login · No Ads</div>
+  <h1>Calculate Your SIP.<br><span class="accent">Grow Your Bucks.</span></h1>
+  <p>India's simplest SIP calculator with an AI advisor. Know exactly how much your money will grow — then ask any investing question.</p>
+</div>
+
+<div class="stats-bar">
+  <div class="stat"><div class="stat-val">1 Cr+</div><div class="stat-label">SIP investors in India</div></div>
+  <div class="stat"><div class="stat-val">12–15%</div><div class="stat-label">Avg equity fund returns</div></div>
+  <div class="stat"><div class="stat-val">₹500</div><div class="stat-label">Minimum to start</div></div>
+  <div class="stat"><div class="stat-val">100%</div><div class="stat-label">Free forever</div></div>
+</div>
+
+<div class="main">
+
+  <!-- CALCULATOR -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon">🧮</div>
+      <h2>SIP Calculator</h2>
+    </div>
+    <div class="card-body">
+      <div class="field">
+        <label>Monthly SIP Amount</label>
+        <div class="input-wrap">
+          <span class="input-prefix">₹</span>
+          <input type="number" id="sipAmount" value="5000" min="500" oninput="calculate()">
+        </div>
+      </div>
+      <div class="range-field">
+        <div class="range-top">
+          <span class="range-lbl">Investment Period</span>
+          <span class="range-val" id="yearsVal">10 Years</span>
+        </div>
+        <input type="range" id="years" min="1" max="30" value="10" oninput="updateYears();calculate()">
+      </div>
+      <div class="range-field">
+        <div class="range-top">
+          <span class="range-lbl">Expected Returns (p.a.)</span>
+          <span class="range-val" id="rateVal">12%</span>
+        </div>
+        <input type="range" id="rate" min="6" max="20" value="12" oninput="updateRate();calculate()">
+      </div>
+      <div class="field">
+        <label>Your Goal</label>
+        <select id="goal" onchange="calculate()">
+          <option>Retirement corpus</option>
+          <option>Child's education</option>
+          <option>Buy a house</option>
+          <option>Emergency fund</option>
+          <option>Wealth creation</option>
+          <option>Foreign trip / Big purchase</option>
+        </select>
+      </div>
+      <div class="auto-note">✦ Results update live as you move sliders</div>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon">📈</div>
+      <h2>Your Results</h2>
+    </div>
+    <div class="card-body">
+      <div class="result-grid">
+        <div class="result-item">
+          <div class="result-label">You Invest</div>
+          <div class="result-value" id="totalInvested">₹6.00 L</div>
+        </div>
+        <div class="result-item highlight">
+          <div class="result-label">Total Value 🎯</div>
+          <div class="result-value" id="totalValue">₹11.62 L</div>
+        </div>
+        <div class="result-item">
+          <div class="result-label">Wealth Gained</div>
+          <div class="result-value" id="wealthGained">₹5.62 L</div>
+        </div>
+        <div class="result-item">
+          <div class="result-label">Returns %</div>
+          <div class="result-value" id="returnsPct">93.6%</div>
+        </div>
+      </div>
+      <div class="growth-bar-wrap">
+        <div class="growth-bar-labels">
+          <span>Invested</span>
+          <span>Wealth Gained</span>
+        </div>
+        <div class="growth-bar-track">
+          <div class="growth-bar-fill" id="growthBar" style="width:48%"></div>
+        </div>
+      </div>
+      <div class="insight-box">
+        <div class="insight-label">💡 SIPBucks Insight</div>
+        <div class="insight-text" id="quickInsight">Your ₹5,000/month grows nearly 2x in 10 years. Compounding is your biggest wealth tool.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI ADVISOR -->
+  <div class="ai-section">
+    <div class="ai-header">
+      <div class="ai-header-left">
+        <div class="ai-icon">🤖</div>
+        <span class="ai-title">AI Investment Advisor</span>
+        <span class="ai-badge">POWERED BY CLAUDE AI</span>
+      </div>
+    </div>
+    <div class="ai-body">
+      <div class="chips-label">Tap a question to ask instantly:</div>
+      <div class="chips">
+        <div class="chip" onclick="askChip(this,'Is SIP better than FD for long term in India?')">SIP vs FD</div>
+        <div class="chip" onclick="askChip(this,'Which mutual fund is best for a complete beginner in India?')">Best fund for beginners</div>
+        <div class="chip" onclick="askChip(this,'What is the right SIP amount for a monthly salary of ₹30,000?')">Right SIP for my salary</div>
+        <div class="chip" onclick="askChip(this,'What happens if I miss a SIP payment? Is it a problem?')">Miss a SIP payment?</div>
+        <div class="chip" onclick="askChip(this,'How do I start a SIP in India? Give me step by step guide.')">How to start SIP</div>
+        <div class="chip" onclick="askChip(this,'What is ELSS mutual fund and how does it save income tax in India?')">Save tax with ELSS</div>
+        <div class="chip" onclick="askChip(this,'What is the difference between lump sum and SIP investment?')">Lumpsum vs SIP</div>
+        <div class="chip" onclick="askChip(this,'How much SIP do I need to become a crorepati in 15 years?')">Become Crorepati?</div>
+      </div>
+      <div class="ai-input-row">
+        <input class="ai-input" id="aiQuestion" type="text" placeholder="Ask anything about SIP, mutual funds, investing..." onkeydown="if(event.key==='Enter') askAI()">
+        <button class="ask-btn" id="askBtn" onclick="askAI()">Ask →</button>
+      </div>
+      <div class="ai-loading" id="aiLoading">
+        <div class="dots"><span></span><span></span><span></span></div>
+        <span>SIPBucks AI is thinking...</span>
+      </div>
+      <div class="ai-response" id="aiResponse"></div>
+    </div>
+  </div>
+
+  <div class="disclaimer">
+    ⚠️ <span>SIPBucks is for educational purposes only. Returns shown are estimates based on historical averages — not guaranteed. Please consult a SEBI-registered financial advisor before investing. Mutual fund investments are subject to market risks. Read all scheme-related documents carefully.</span>
+  </div>
+
+</div>
+
+<footer>
+  Made with ❤️ by <span>SIPBucks</span> · India ka apna SIP calculator
+</footer>
+
+<script>
+  function formatINR(n) {
+    if (n >= 10000000) return '₹' + (n/10000000).toFixed(2) + ' Cr';
+    if (n >= 100000) return '₹' + (n/100000).toFixed(2) + ' L';
+    if (n >= 1000) return '₹' + (n/1000).toFixed(1) + 'K';
+    return '₹' + Math.round(n).toLocaleString('en-IN');
+  }
+
+  function updateYears() {
+    const y = document.getElementById('years').value;
+    document.getElementById('yearsVal').textContent = y + ' Year' + (y > 1 ? 's' : '');
+  }
+  function updateRate() {
+    document.getElementById('rateVal').textContent = document.getElementById('rate').value + '%';
+  }
+
+  function calculate() {
+    const sip = parseFloat(document.getElementById('sipAmount').value) || 0;
+    const years = parseInt(document.getElementById('years').value);
+    const r = parseFloat(document.getElementById('rate').value) / 100 / 12;
+    const n = years * 12;
+
+    const invested = sip * n;
+    const total = r > 0 ? sip * ((Math.pow(1+r,n)-1)/r) * (1+r) : invested;
+    const gained = total - invested;
+    const pct = invested > 0 ? ((gained/invested)*100).toFixed(1) : '0';
+
+    document.getElementById('totalInvested').textContent = formatINR(invested);
+    document.getElementById('totalValue').textContent = formatINR(total);
+    document.getElementById('wealthGained').textContent = formatINR(gained);
+    document.getElementById('returnsPct').textContent = pct + '%';
+
+    const barPct = total > 0 ? Math.min(92, (gained/total)*100) : 0;
+    document.getElementById('growthBar').style.width = barPct + '%';
+
+    const mx = (total/invested).toFixed(1);
+    const insights = [
+      `Your ₹${sip.toLocaleString('en-IN')}/month grows ${mx}x in ${years} years! Power of compounding at work.`,
+      `You invest ${formatINR(invested)} but receive ${formatINR(total)}. Market gives you ${formatINR(gained)} extra — for free!`,
+      `${years} years of patience = ${formatINR(gained)} extra wealth. The earlier you start, the bigger the reward.`,
+      `At ₹${sip.toLocaleString('en-IN')}/month, you'll reach ${formatINR(total)} — enough to change your life.`
+    ];
+    document.getElementById('quickInsight').textContent = insights[Math.floor(Math.random()*insights.length)];
+  }
+
+  function askChip(el, q) {
+    document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('aiQuestion').value = q;
+    askAI();
+  }
+
+  async function askAI() {
+    const q = document.getElementById('aiQuestion').value.trim();
+    if (!q) return;
+
+    const sip = document.getElementById('sipAmount').value;
+    const years = document.getElementById('years').value;
+    const rate = document.getElementById('rate').value;
+    const goal = document.getElementById('goal').value;
+
+    const prompt = `You are SIPBucks AI — a friendly, simple Indian financial advisor helping complete beginners understand SIP and mutual fund investing in India.
+
+User's SIP details: ₹${sip}/month, ${years} years, ${rate}% expected returns, goal: ${goal}.
+
+User question: ${q}
+
+Rules:
+- Answer in simple, clear English (no heavy jargon)
+- Keep it practical for Indian investors
+- Use ₹ for amounts, mention Indian fund houses/apps where relevant
+- Be warm and encouraging
+- Maximum 180 words
+- Use bullet points only if listing 3+ things`;
+
+    const resp = document.getElementById('aiResponse');
+    resp.classList.remove('show', 'error');
+    document.getElementById('aiLoading').classList.add('show');
+    document.getElementById('askBtn').disabled = true;
+
+    try {
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'anthropic-dangerous-direct-browser-access': 'true'
+        },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 1000,
+          messages: [{ role: 'user', content: prompt }]
+        })
+      });
+
+      const raw = await res.text();
+      let data;
+      try { data = JSON.parse(raw); }
+      catch(e) { throw new Error('Bad response from server.'); }
+
+      if (!res.ok) throw new Error(data?.error?.message || `Server error ${res.status}`);
+
+      const text = (data?.content || []).filter(b => b.type === 'text').map(b => b.text).join('').trim();
+      if (!text) throw new Error('AI returned empty answer.');
+
+      resp.textContent = text;
+      resp.classList.add('show');
+
+    } catch (err) {
+      resp.textContent = '⚠️ ' + err.message + '\n\nThe AI advisor requires an active internet connection and works best inside Claude.ai. Try refreshing and asking again.';
+      resp.classList.add('show', 'error');
+    } finally {
+      document.getElementById('aiLoading').classList.remove('show');
+      document.getElementById('askBtn').disabled = false;
+    }
+  }
+
+  calculate();
+</script>
+</body>
+</html>
